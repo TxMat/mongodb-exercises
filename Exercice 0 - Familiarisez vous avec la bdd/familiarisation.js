@@ -8,6 +8,7 @@
 // use <nom de la BDD>
 // Si cette base n'existe pas, il en crée une en local temporairement avec le nom spécifié
 
+
 // 3 Quelles sont les différentes collections présentes dans cette BDD ? Quelle commande permet de les afficher.
 // Les différentes collections présentes dans cette BDD sont bel20, cheeses, irons, laptops
 // La commande permettant de les afficher est :
