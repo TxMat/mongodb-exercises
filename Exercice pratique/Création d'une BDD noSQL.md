@@ -35,6 +35,42 @@ Ci-dessous, vous pouvez consulter la base de données d'un service de livraison 
 | 301     | 1      | 2023-01-15 12:30:00     | En cours  |
 | 302     | 2      | 2023-01-16 18:45:00     | Livrée    |
 
+```json
+[
+  {
+    "OrderID": 301,
+    "UserID": 1,
+    "Date": "2023-01-15 12:30:00",
+    "Status": "En cours"
+  },
+  {
+    "OrderID": 302,
+    "UserID": 2,
+    "Date": "2023-01-16 18:45:00",
+    "Status": "En cours"
+  }
+]
+```
+
+```json
+[
+  {
+    "ProduitID": 201,
+    "Nom": "Boeuf Bourguignon",
+    "Description": "Plat traditionnel français",
+    "Prix": 15.99,
+    "RestaurantID": 101
+  },
+  {
+    "ProduitID": 202,
+    "Nom": "Sashimi Mix",
+    "Description": "Assortiment de sashimis",
+    "Prix": 20.99,
+    "RestaurantID": 102
+  }
+]
+```
+
 ## À vous de jouer
 #### Création des collections et insertion de documents
 
@@ -51,28 +87,57 @@ Ci-dessous, vous pouvez consulter la base de données d'un service de livraison 
 
 - Écrivez une requête pour récupérer tous les utilisateurs de la collection "utilisateurs".
 
-`Votre réponse..`
+```js
+db.utilisateurs.find()
+```
 
 - Écrivez une requête pour récupérer toutes les commandes datées du 16 janvier 2023. À grande echelle, cette requête est-elle efficace ? Pourquoi ?
 
-`Votre réponse..`
+```js
+db.commandes.find({"Date": {$regex: /^2023-01-16/}})
+```
+
+`Cette requette est inneficace a grande echelle car elle execute une regex`
 
 #### Mise à jour de données
 
 - Modifiez le document d'un utilisateur pour mettre à jour son adresse e-mail (choisissez une nouvelle adresse mail).
-- Modifiez le document du restaurand Sushi Express pour ajouter un champ "fermeture" avec la date du "01/12/2023". Une opération pareille aurait-elle été possible en SQL ?
+- Modifiez le document du restaurant Sushi Express pour ajouter un champ "fermeture" avec la date du "01/12/2023". Une opération pareille aurait-elle été possible en SQL ?
 
-`Votre réponse..`
+```js
+db.utilisateurs.updateOne({ "UserID": 1 }, { $set: { "email": "new.email@gmail.com"} })
+    
+db.restaurants.updateOne({ "Nom": "Sushi Express" }, { $set: { "fermeture": "01/12/2023"} })
+```
+
+`Une telle opération aurait été impossible en SQL, il aurait fallu créer une nouvelle table.`
 
 - Supprimez le restaurant Sushi-express. Remarquez-vous une incohérence dans l'ensemble de base de donnée ?
 
-`Votre réponse..`
+``
 
 #### Agrégation de données
 Ressource utile : https://www.mongodb.com/docs/manual/core/map-reduce/ https://www.youtube.com/watch?v=cHGaQz0E7AU https://www.youtube.com/watch?v=fEACZP_878Y
 - Utilisez l'agrégation pour trouver la moyenne des prix des produits.
  
-`Votre réponse..`
+```js
+db.produits.aggregate([
+    {
+        $group: {
+            _id: null,
+            total: { $sum: "$Prix" },
+            count: { $sum: 1 }
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            average: { $divide: ["$total", "$count"] }
+        }
+    }
+])
+```
+`[ { average: 18.49 } ]`
 
 - Utilisez l'agrégation pour regrouper les utilisateurs par adresse et compter combien d'utilisateurs ont la même adresse.
  
@@ -80,5 +145,5 @@ Ressource utile : https://www.mongodb.com/docs/manual/core/map-reduce/ https://w
 
 - En considérant le fait que MongoDB dispatch ses données sur plusieurs serveurs, en quoi cette méthode "d'agrégation" permet à MongoDB de travailler efficacement ?
 
-`Votre réponse..`
+`Elle permet de tirer parti de la nature distribuée des BDDs NoSQL en divisant les calculs en sous calculs s'executant chacun sur un noeud différent distribuant ansi la charge de travail`
 
