@@ -114,6 +114,10 @@ db.restaurants.updateOne({ "Nom": "Sushi Express" }, { $set: { "fermeture": "01/
 
 - Supprimez le restaurant Sushi-express. Remarquez-vous une incohérence dans l'ensemble de base de donnée ?
 
+```js
+db.restaurants.remove({"Nom": "Sushi Express"})
+```
+
 ``
 
 #### Agrégation de données
