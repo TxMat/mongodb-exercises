@@ -140,8 +140,28 @@ db.produits.aggregate([
 `[ { average: 18.49 } ]`
 
 - Utilisez l'agrégation pour regrouper les utilisateurs par adresse et compter combien d'utilisateurs ont la même adresse.
- 
-`Votre réponse..`
+
+```js
+db.utilisateurs.aggregate([
+        {
+            $group: {
+                _id: "$Adresse",
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: {
+                _id: -1
+            }
+        }
+    ])
+```
+
+`[
+    { _id: '456 Avenue des Fleurs', count: 2 },
+    { _id: '123 rue de la République', count: 1 }
+]
+`
 
 - En considérant le fait que MongoDB dispatch ses données sur plusieurs serveurs, en quoi cette méthode "d'agrégation" permet à MongoDB de travailler efficacement ?
 
